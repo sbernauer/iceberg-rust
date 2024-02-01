@@ -25,7 +25,6 @@ use crate::spec::{
 };
 use crate::table::Table;
 use crate::{Error, ErrorKind, Result};
-use async_trait::async_trait;
 use std::collections::HashMap;
 use std::mem::take;
 use std::ops::Deref;
@@ -33,7 +32,7 @@ use typed_builder::TypedBuilder;
 use uuid::Uuid;
 
 /// The catalog API for Iceberg Rust.
-#[async_trait]
+#[trait_variant::make(SendCatalog: Send)]
 pub trait Catalog: std::fmt::Debug {
     /// List namespaces from table.
     async fn list_namespaces(&self, parent: Option<&NamespaceIdent>)
@@ -505,7 +504,7 @@ mod tests {
 {
     "type": "assert-ref-snapshot-id",
     "ref": "snapshot-name",
-    "snapshot-id": null 
+    "snapshot-id": null
 }
         "#,
             TableRequirement::RefSnapshotIdMatch {
@@ -625,7 +624,7 @@ mod tests {
 {
     "action": "assign-uuid",
     "uuid": "2cc52516-5e73-41f2-b139-545d41a4e151"
-}        
+}
         "#,
             TableUpdate::AssignUuid {
                 uuid: uuid!("2cc52516-5e73-41f2-b139-545d41a4e151"),
@@ -640,7 +639,7 @@ mod tests {
 {
     "action": "upgrade-format-version",
     "format-version": 2
-}        
+}
         "#,
             TableUpdate::UpgradeFormatVersion {
                 format_version: FormatVersion::V2,
@@ -932,7 +931,7 @@ mod tests {
         1,
         2
     ]
-}  
+}
         "#;
 
         let update = TableUpdate::RemoveSnapshots {
@@ -990,7 +989,7 @@ mod tests {
     "min-snapshots-to-keep": 2,
     "max-snapshot-age-ms": 3,
     "max-ref-age-ms": 4
-}        
+}
         "#;
 
         let update = TableUpdate::SetSnapshotRef {
@@ -1017,7 +1016,7 @@ mod tests {
         "prop1": "v1",
         "prop2": "v2"
     }
-}        
+}
         "#;
 
         let update = TableUpdate::SetProperties {
@@ -1041,7 +1040,7 @@ mod tests {
         "prop1",
         "prop2"
     ]
-}        
+}
         "#;
 
         let update = TableUpdate::RemoveProperties {
